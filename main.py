@@ -11,12 +11,20 @@ def main():
         raise RuntimeError("No API key found")
 
     client = genai.Client(api_key=api_key)
+    prompt = "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
     
     response = client.models.generate_content(
         model="gemini-2.5-flash", 
-        contents="Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum.",
+        contents=prompt,
     )
+    prompt_tokens = response.usage_metadata.prompt_token_count
+    response_tokens = response.usage_metadata.candidates_token_count
 
+    if response.usage_metadata == None:
+        raise RuntimeError("Failed API request. Please try again.")
+
+    print(f"User prompt: {prompt}")
+    print(f"Prompt tokens: {prompt_tokens}\nResponse tokens: {response_tokens}")
     print("Response:")
     print(response.text)
 
